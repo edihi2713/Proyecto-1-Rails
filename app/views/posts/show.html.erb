@@ -1,49 +1,35 @@
-<p id="notice"><%= notice %></p>
 
-<p>
-  <strong>User:</strong>
-  <%= @post.user %>
-</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-10 col-md-offset-1">
+      <%= link_to 'Volver', posts_path %>
+      <h1><%= @post.title %></h1>
+      <div><%= markdown(@post.body) %></div>
+      <div class="comments">
+               <h2>Comentarios</h2>
+               <% @post.comments.each do |comment| %>
+                 <div class="panel panel-default">
+                   <div class="panel-heading"><small><%= comment.user.email %> comentó hace <%= distance_of_time_in_words(Time.now,comment.created_at) %></small></div>
+                     <div class="panel-body">
+                      <%= comment.body %> <br>
+                     </div>
+                 </div>
+               <% end %>
 
-<p>
-  <strong>Title:</strong>
-  <%= @post.title %>
-</p>
+               <% if signed_in? %>
+                 <%= form_for [@post, @post.comments.build] do |f| %>
+                   <div class="form-group">
+                     <%= f.text_area :body, class: "form-control", placeholder: "Agregar comentario" %>
+                   </div>
 
-<p>
-  <strong>Body:</strong>
-  <%= @post.body %>
-</p>
+                   <div class="actions text-right">
+                     <%= f.submit "Comentar", class: "btn btn-primary" %>
+                   </div>
+                 <% end %>
+               <% end %>
+        </div>
 
-<%= link_to 'Edit', edit_post_path(@post) %> |
-<%= link_to 'Back', posts_path %>
+    </div>
+  </div>
+</div>
 
- <div class="comments">
-          <h2>Comentarios</h2>
-
-          <% @post.comments.each do |comment| %>
-            <div class="panel panel-default">
-           	<small> Creado  por: <%= comment.user.email %></small>
-              <div class="panel-body">
-              	<%= comment.body %> <br>
-              		<% if comment.user_id == current_user.id %>
-              	 		<%= link_to 'Edit', edit_post_comment_path(comment) %> -
-              	 		<%= link_to 'Remove',post_comment_path(comment), method: :delete, data: { confirm: 'Are you sure to delete this comment?' } %>
-              	 	<% end %>
-              </div>
-            </div>
-          <% end %>
-
-          <% if signed_in? %>
-            <%= form_for [@post, @post.comments.build] do |f| %>
-              <div class="form-group">
-                <%= f.text_area :body, class: "form-control", placeholder: "Agregar comentario" %>
-              </div>
-
-              <div class="actions text-right">
-                <%= f.submit "Comentar", class: "btn btn-primary" %>
-              </div>
-            <% end %>
-          <% end %>
-          
-   </div>
